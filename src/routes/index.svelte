@@ -1,4 +1,46 @@
 
+<TextInput bind:value={player1} labelText="player1" placeholder="Enter user name..." />
+<TextInput bind:value={player2} labelText="player2" placeholder="Enter user name..." />
+
+<Select labelText="map" bind:selected={map}>
+  <SelectItem value="투혼" text="투혼" />
+  <SelectItem value="폴리" text="폴리" />
+  <SelectItem value="이클" text="이클" />
+  
+</Select>
+
+
+<RadioButtonGroup
+  orientation="vertical"
+  legendText="승 선택"
+  bind:selected={w}
+>
+  <RadioButton labelText="player1" value="player1" />
+  <RadioButton labelText="player2" value="player2" />
+
+</RadioButtonGroup>
+
+
+<button on:click={addMatch}>Add</button>
+
+
+
+
+<DataTable
+size="compact"
+expandable
+headers={[  { key: 'player1', value: 'player1' },  { key: 'player2', value: 'player2' },  { key: 'map', value: 'map' },  { key: 'w', value: 'w' }]}
+rows={allMatchs}
+>
+<div slot="expanded-row" let:row>
+  <pre>
+    {JSON.stringify(row, null,1)}
+    
+  </pre>
+</div>
+</DataTable>
+
+
 
 {#if $authStore.firebaseControlled}
  {#if !$authStore.isLoggedIn}
@@ -31,24 +73,12 @@
 <button on:click={addTodo}>Add</button>
 
 
-<ol>
-  {#each alltodo as item}
-    <li class:complete={item.isComplete}>
-      <span>
-        {item.task}
-      </span>
-      <span>
-        <button on:click={() => markTodoAsComplete(item)}>✔</button>
-        <button on:click={() => deleteTodo(item.id)}>✘</button>
-      </span>
-    </li>
-  {:else}
-    <p>No todos found</p>
-  {/each}
-  <p class="error">{error}</p>
-</ol>
+
 
 <svelte:window on:keydown={keyIsPressed} />
+
+
+<svelte:head><link rel="stylesheet" href="https://unpkg.com/carbon-components-svelte@0.50.2/css/white.css" /></svelte:head>
 
 <script>
 import {
@@ -78,18 +108,19 @@ import { goto } from '$app/navigation';
 
 
 
-let alltodo=[];
-const ref = collection(db,'todos')
+let allMatchs=[];
+const ref = collection(db,'match')
 onSnapshot(ref,(sn)=>{
-    let todos=[];
+    let matchs =[];
 sn.forEach((doc)=>{
- let todo ={ ...doc.data(),id:doc.id};
- todos=[todo, ...todos];
-})
- alltodo = todos;
 
+ let match ={ ...doc.data(),id:doc.id};
+ matchs=[match, ...matchs];
+})
+allMatchs = matchs;
 
 })
+
 
 
 let task = "";
@@ -107,14 +138,7 @@ let task = "";
     }
     task = "";
   };
-  const markTodoAsComplete = async (item) => {
-    await updateDoc(doc(db, "todos", item.id), {
-      isComplete: !item.isComplete,
-    });
-  };
-  const deleteTodo = async (id) => {
-    await deleteDoc(doc(db, "todos", id));
-  };
+
   const keyIsPressed = (event) => {
     if (event.key === "Enter") {
       addTodo();
@@ -178,14 +202,45 @@ const sub = authStore.subscribe(async (info) => {
  
 
 
-   
-  
+    import { 
+      DataTable,
+      TextInput,
+      RadioButtonGroup, 
+      RadioButton, 
+      Select, 
+      SelectItem  } from "carbon-components-svelte";
+
+    let w ="";
+    let player1="";
+    let player2="";
+    let map = "";
+    let addMatch= async ()=>{
+    
+    if (player1 !== "" && player2 !== "" && w !== "" && map !=="") {
+      const docRef = await addDoc(collection(db, "match"), {
+        player1:player1,
+        player2:player2,
+        w:w,
+        map:map,
+        createdAt: new Date(),
+      });
+      error = "";
+    } else {
+      error = "Task is empty";
+    }
+    player1 = "";
+    player2 = "";
+    map="";
+    w="";
+
+
+  };
+ 
+
 </script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-  .complete {
-    text-decoration: line-through;
-  }
-  .error {
-    color: red;
-  }
+
+
 </style>
+

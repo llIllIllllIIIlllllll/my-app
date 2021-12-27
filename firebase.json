@@ -13,7 +13,7 @@
     ]
   },
   "hosting": {
-    "public": ".svelte-kit/build",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
