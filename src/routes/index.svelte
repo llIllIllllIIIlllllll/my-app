@@ -369,7 +369,7 @@ let player2univimg ="";
         w:w,
         map:map,
         searchfield:player1+player2,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toLocaleDateString() + new Date().toLocaleTimeString()
       });
 
       player1univ="";
@@ -460,7 +460,7 @@ let player2univimg ="";
         univ :univ,
         univimg :univimg,
         race:race,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toLocaleDateString() + new Date().toLocaleTimeString()
       });
      } catch (error) {
        console.error(error)
