@@ -68,7 +68,7 @@
    
     {#each allMatchs as match}
     <StructuredListRow >
-      <StructuredListCell >{moment().startOf('hour').fromNow(match.createdAt)}</StructuredListCell>
+      <StructuredListCell >{match.createdAt}</StructuredListCell>
       {#if match.player1 === match.w}
       <span class="win"> <StructuredListCell >{match.player1} {match.race1} <img src={match.player1univimg} alt="media"/>   </StructuredListCell></span>
       <StructuredListCell >{match.map}</StructuredListCell>
@@ -162,18 +162,11 @@ import {
 import { 
     addDoc, 
     collection,  
-    deleteDoc,  
-    doc,  
     onSnapshot, 
-    updateDoc,
     query, 
     where, 
     orderBy,
 getDocs,
-Firestore,
-serverTimestamp,
-getDoc,
-
     } from 'firebase/firestore';
 
 import { onDestroy, onMount} from 'svelte';
@@ -191,7 +184,7 @@ let allMatchs=[];
 
 const ref = collection(db,'match')
 
-const q = query(ref, orderBy("createdAt", 'desc'));
+const q = query(ref, orderBy("createdAt", 'asc'));
 
 
 //const query(on)Snapshot = await getDocs(q);
@@ -365,8 +358,9 @@ let player2univimg ="";
       player1 = player1.split('.')[0];
       player2 = player2.split('.')[0];
     
- 
-     
+       
+
+    
       const docRef = await addDoc(collection(db, "match"), {
         player1:player1,
         player2:player2,
@@ -377,7 +371,7 @@ let player2univimg ="";
         w:w,
         map:map,
         searchfield:player1+player2,
-        createdAt: serverTimestamp()
+        createdAt: new Date().toISOString()
       });
 
       player1univ="";
@@ -468,8 +462,7 @@ let player2univimg ="";
         univ :univ,
         univimg :univimg,
         race:race,
-        createdAt: serverTimestamp()
-
+        createdAt: new Date().toISOString()
       });
      } catch (error) {
        console.error(error)
@@ -486,7 +479,7 @@ let player2univimg ="";
 
   let allPlayer=[];
 const playerRef = collection(db,'player')
-const playerQ = query(playerRef, orderBy("createdAt", 'desc'));
+const playerQ = query(playerRef, orderBy("createdAt", 'asc'));
 //const query(on)Snapshot = await getDocs(q);
 onSnapshot(playerQ,(sn)=>{
     let players =[];
