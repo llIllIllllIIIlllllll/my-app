@@ -172,9 +172,7 @@ getDocs,
 import { onDestroy, onMount} from 'svelte';
 import authStore from '$lib/authStore';
 import { goto } from '$app/navigation';
-import moment from 'moment'
 
-moment.locale('ko')
 
 let search ="";
 
